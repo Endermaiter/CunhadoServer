@@ -16,50 +16,54 @@ public class Server {
 
             InetSocketAddress addr = new InetSocketAddress("localhost", 5555);
             serverSocket.bind(addr);
+            do {
+                System.out.println("Aceptando conexiones");
 
-            System.out.println("Aceptando conexiones");
+                Socket newSocket = serverSocket.accept();
 
-            Socket newSocket = serverSocket.accept();
+                System.out.println("Conexión recibida");
 
-            System.out.println("Conexión recibida");
+                InputStream is = newSocket.getInputStream();
+                OutputStream os = newSocket.getOutputStream();
 
-            InputStream is = newSocket.getInputStream();
-            OutputStream os = newSocket.getOutputStream();
+                byte[] arrayOpcion = new byte[1];
+                is.read(arrayOpcion);
 
-            byte[] arrayOpcion = new byte[1];
-            is.read(arrayOpcion);
+                int opcion = Integer.parseInt(new String(arrayOpcion));
+                System.out.println("OPCION: " + opcion);
 
-            int opcion = Integer.parseInt(new String(arrayOpcion));
-            System.out.println(opcion);
+                byte[] arrayDigitos = new byte[1];
+                is.read(arrayDigitos);
 
-            switch (opcion){
-                case 1:
-                    byte[] arrayDatos = new byte[2];
-                    is.read(arrayDatos);
-                    int datoRecibido = Integer.parseInt(new String(arrayDatos));
-                    System.out.println(datoRecibido);
-                    break;
-                case 2:
-                    System.out.println("OPTION 2");
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-            }
+                int digitos = Integer.parseInt(new String(arrayDigitos));
+                System.out.println("DIGITOS: " + digitos);
 
+                switch (opcion) {
+                    case 1:
+                        byte[] arrayDatos = new byte[digitos];
+                        is.read(arrayDatos);
+                        int datoRecibido = Integer.parseInt(new String(arrayDatos));
+                        System.out.println("DATO RECIBIDO: " + datoRecibido);
+                        break;
+                    case 2:
+                        System.out.println("OPTION 2");
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        System.out.println("Cerrando el nuevo socket");
 
+                        newSocket.close();
 
-            System.out.println("Cerrando el nuevo socket");
+                        System.out.println("Cerrando el socket servidor");
 
-            newSocket.close();
+                        serverSocket.close();
 
-            System.out.println("Cerrando el socket servidor");
-
-            serverSocket.close();
-
-            System.out.println("Terminado");
-
+                        System.out.println("Terminado");
+                }
+            } while (true);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
