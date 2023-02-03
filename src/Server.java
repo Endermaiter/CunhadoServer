@@ -26,10 +26,29 @@ public class Server {
             InputStream is = newSocket.getInputStream();
             OutputStream os = newSocket.getOutputStream();
 
-            byte[] mensaje = new byte[25];
-            is.read(mensaje);
+            byte[] arrayOpcion = new byte[1];
+            is.read(arrayOpcion);
 
-            System.out.println("Mensaje recibido: " + new String(mensaje));
+            int opcion = Integer.parseInt(new String(arrayOpcion));
+            System.out.println(opcion);
+
+            switch (opcion){
+                case 1:
+                    byte[] arrayDatos = new byte[2];
+                    is.read(arrayDatos);
+                    int datoRecibido = Integer.parseInt(new String(arrayDatos));
+                    System.out.println(datoRecibido);
+                    break;
+                case 2:
+                    System.out.println("OPTION 2");
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+            }
+
+
 
             System.out.println("Cerrando el nuevo socket");
 
