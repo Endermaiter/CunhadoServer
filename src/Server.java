@@ -6,103 +6,127 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main(String[] args) {
-        try {
-            System.out.println("Creando socket servidor");
+    public static void main(String[] args) throws IOException {
 
-            ServerSocket serverSocket = new ServerSocket();
+        System.out.println("**SERVIDOR**\n");
 
-            System.out.println("Realizando el bind");
+        //Creando socket servidor
+        ServerSocket serverSocket = new ServerSocket();
 
-            InetSocketAddress addr = new InetSocketAddress("localhost", 5555);
-            serverSocket.bind(addr);
-            do {
-                System.out.println("Aceptando conexiones");
+        //Realizamos el bind
+        InetSocketAddress addr = new InetSocketAddress("localhost", 5555);
+        serverSocket.bind(addr);
 
-                Socket newSocket = serverSocket.accept();
+        do {
+            //Esperando a que llegue una conexión
+            System.out.println("Aceptando conexiones...\n");
+            Socket newSocket = serverSocket.accept();
 
-                System.out.println("Conexión recibida");
+            System.out.println("Conexión recibida!!\n");
 
-                InputStream is = newSocket.getInputStream();
+            //Instancia del objeto de entrada
+            InputStream is = newSocket.getInputStream();
 
-                byte[] arrayOpcion = new byte[1];
-                is.read(arrayOpcion);
+            //Metemos en una variable la opcion leida que determina cómo el servidor debe tratar el dato
+            byte[] arrayOpcion = new byte[1];
+            is.read(arrayOpcion);
+            int opcion = Integer.parseInt(new String(arrayOpcion));
 
-                int opcion = Integer.parseInt(new String(arrayOpcion));
-                System.out.println("OPCION: " + opcion);
+            //Metemos en una variable el numero de digitos que tiene el dato recibido
+            byte[] arrayDigitos = new byte[1];
+            is.read(arrayDigitos);
+            int digitos = Integer.parseInt(new String(arrayDigitos));
 
-                byte[] arrayDigitos = new byte[1];
-                is.read(arrayDigitos);
+            System.out.println("Haciendo cálculos...\n");
 
-                int digitos = Integer.parseInt(new String(arrayDigitos));
-                System.out.println("DIGITOS: " + digitos);
+            switch (opcion) {
 
-                switch (opcion) {
-                    case 1:
-                        byte[] arrayDatos = new byte[digitos];
-                        is.read(arrayDatos);
+                case 1 -> {
 
-                        int datoRecibido = Integer.parseInt(new String(arrayDatos));
-                        float eqCamposFlo = datoRecibido / 4050f; //1 campo de fútbol = 4050m2
-                        String eqCampos = String.valueOf(eqCamposFlo);
+                    //Metemos en una variable el dato recibido por el cliente (El tamaño del array será exactamente igual numero de cifras del dato)
+                    byte[] arrayDatos = new byte[digitos];
+                    is.read(arrayDatos);
+                    int datoRecibido = Integer.parseInt(new String(arrayDatos));
 
-                        devolverDatos(eqCampos);
-                        break;
-                    case 2:
-                        byte[] arrayDatos2 = new byte[digitos];
-                        is.read(arrayDatos2);
+                    //Hacemos los cálculos necesarios
+                    float eqCamposFlo = datoRecibido / 4050f; //1 campo de fútbol = 4050m2
+                    String eqCampos = String.valueOf(eqCamposFlo);
 
-                        int datoRecibido2 = Integer.parseInt(new String(arrayDatos2));
-                        float eqMesesFlo = (datoRecibido2 / 575f); //Me quedan 575 meses para la jubilación ((67-19)*12)
-                        String eqMeses = String.valueOf(eqMesesFlo);
+                    //le mandamos el dato modificado al método devolverDatos que mandará el dato al cliente
+                    devolverDatos(eqCampos);
 
-                        devolverDatos(eqMeses);
-                        break;
-                    case 3:
-                        byte[] arrayDatos3 = new byte[digitos];
-                        is.read(arrayDatos3);
+                } //**EL RESTO DE OPCIONES FUNCIONAN EXACTAMENTE IGUAL QUE LA PRIMERA PERO CAMBIANDO LAS OPERACIONES
 
-                        int datoRecibido3 = Integer.parseInt(new String(arrayDatos3));
-                        float eqLibrosFlo = datoRecibido3 / 47f; //Pérez Reverte tiene 47 obras literarias
-                        String eqLibros = String.valueOf(eqLibrosFlo);
+                case 2 -> {
 
-                        devolverDatos(eqLibros);
-                        break;
-                    case 4:
-                        byte[] arrayDatos4 = new byte[digitos];
-                        is.read(arrayDatos4);
+                    byte[] arrayDatos2 = new byte[digitos];
+                    is.read(arrayDatos2);
+                    int datoRecibido2 = Integer.parseInt(new String(arrayDatos2));
 
-                        int datoRecibido4 = Integer.parseInt(new String(arrayDatos4));
-                        float difGasolinaFlo = datoRecibido4 - 1.517f; //gasolinera más barata -> 1,517€/L
-                        String difGasolina = String.valueOf(difGasolinaFlo);
+                    float eqMesesFlo = (datoRecibido2 * 12); //Meses que quedan para la jubilación
+                    String eqMeses = String.valueOf(eqMesesFlo);
 
-                        devolverDatos(difGasolina);
-                        break;
-                    case 5:
-                        System.out.println("Cerrando el nuevo socket");
-
-                        newSocket.close();
-
-                        System.out.println("Cerrando el socket servidor");
-
-                        serverSocket.close();
-
-                        System.out.println("Terminado");
+                    devolverDatos(eqMeses);
                 }
-            } while (true);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+
+                case 3 -> {
+
+                    byte[] arrayDatos3 = new byte[digitos];
+                    is.read(arrayDatos3);
+                    int datoRecibido3 = Integer.parseInt(new String(arrayDatos3));
+
+                    float eqLibrosFlo = datoRecibido3 / 47f; //Pérez Reverte tiene 47 obras literarias
+                    String eqLibros = String.valueOf(eqLibrosFlo);
+
+                    devolverDatos(eqLibros);
+                }
+
+                case 4 -> {
+
+                    byte[] arrayDatos4 = new byte[digitos];
+                    is.read(arrayDatos4);
+                    int datoRecibido4 = Integer.parseInt(new String(arrayDatos4));
+
+                    float difGasolinaFlo = datoRecibido4 - 1.517f; //gasolinera más barata -> 1,517€/L
+                    String difGasolina = String.valueOf(difGasolinaFlo);
+
+                    devolverDatos(difGasolina);
+                }
+
+                case 5 -> {
+
+                    //Cerrando el socket
+                    newSocket.close();
+
+                    //Cerrando el socket del servdor
+                    serverSocket.close();
+
+                    //Cerrando servidor
+                    System.out.println("Cerrando servidor...");
+                    System.exit(0);
+                }
+            }
+        } while (true);
     }
 
     public static void devolverDatos(String dato) throws IOException {
 
+        //Creamos un nuevo socket
         Socket serverSocket = new Socket();
+
+        //Asignamos ip y puerto
         InetSocketAddress addr = new InetSocketAddress("localhost", 5566);
         serverSocket.connect(addr);
+
+        //Instanciamos el objeto de salida
         OutputStream os = serverSocket.getOutputStream();
+
+        //Devolvemos el dato
+        System.out.println("Devolviendo dato...");
         os.write(dato.getBytes());
-        System.out.println("Dato devuelto: " + dato);
+
+        //Cerramos el socket
+        os.close();
         serverSocket.close();
 
     }
