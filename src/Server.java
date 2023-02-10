@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+
     public static void main(String[] args) throws IOException {
 
         System.out.println("**SERVIDOR**\n");
@@ -54,6 +55,7 @@ public class Server {
 
                     //le mandamos el dato modificado al método devolverDatos que mandará el dato al cliente
                     devolverDatos(eqCampos);
+                    System.out.println(eqCampos);
 
                 } //**EL RESTO DE OPCIONES FUNCIONAN EXACTAMENTE IGUAL QUE LA PRIMERA PERO CAMBIANDO LAS OPERACIONES
 
@@ -103,6 +105,7 @@ public class Server {
 
                     //Cerrando servidor
                     System.out.println("Cerrando servidor...");
+                    System.out.println("**SERVIDOR CERRADO**");
                     System.exit(0);
                 }
             }
@@ -110,24 +113,23 @@ public class Server {
     }
 
     public static void devolverDatos(String dato) throws IOException {
-
         //Creamos un nuevo socket
-        Socket serverSocket = new Socket();
+        Socket clienteSocket = new Socket();
+        System.out.println("Estableciendo la conexión...\n");
 
-        //Asignamos ip y puerto
-        InetSocketAddress addr = new InetSocketAddress("localhost", 5566);
-        serverSocket.connect(addr);
+        //Asignamos ip y puerto al nuevo socket
+        InetSocketAddress addr = new InetSocketAddress("localhost", 6666);
+        clienteSocket.connect(addr);
 
         //Instanciamos el objeto de salida
-        OutputStream os = serverSocket.getOutputStream();
+        OutputStream os = clienteSocket.getOutputStream();
 
         //Devolvemos el dato
-        System.out.println("Devolviendo dato...");
+        System.out.println("Devolviendo dato...\n");
         os.write(dato.getBytes());
+        System.out.println("Dato devuelto\n");
 
         //Cerramos el socket
-        os.close();
-        serverSocket.close();
-
+        clienteSocket.close();
     }
 }
