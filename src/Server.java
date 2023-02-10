@@ -24,7 +24,6 @@ public class Server {
                 System.out.println("Conexión recibida");
 
                 InputStream is = newSocket.getInputStream();
-                OutputStream os = newSocket.getOutputStream();
 
                 byte[] arrayOpcion = new byte[1];
                 is.read(arrayOpcion);
@@ -44,6 +43,11 @@ public class Server {
                         is.read(arrayDatos);
                         int datoRecibido = Integer.parseInt(new String(arrayDatos));
                         System.out.println("DATO RECIBIDO: " + datoRecibido);
+                        float eqCamposInt = datoRecibido/4050f;
+                        System.out.println("EqCamposINT: "+eqCamposInt);
+                        String eqCampos = String.valueOf(eqCamposInt); //1 campo de fútbol = 4050m2
+                        System.out.println("EqCampos: "+eqCampos);
+                        devolverDatos(eqCampos);
                         break;
                     case 2:
                         System.out.println("OPTION 2");
@@ -67,5 +71,17 @@ public class Server {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void devolverDatos(String dato) throws IOException {
+
+        Socket serverSocket = new Socket();
+        InetSocketAddress addr = new InetSocketAddress("localhost", 5566);
+        serverSocket.connect(addr);
+        OutputStream os = serverSocket.getOutputStream();
+        os.write(dato.getBytes());
+        System.out.println("Dato devuelto: " + dato);
+        serverSocket.close();
+
     }
 }
